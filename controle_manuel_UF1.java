@@ -39,10 +39,10 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
 
         double tgtPowerLeft = 0;
         double tgtPowerRight = 0;
-        double tgtPower2 = 0;
-        double tgtPower3 = 0;
         double tgtTurnLeft = 0;
         double tgtTurnRight = 0;
+        double tgtBrasRota = 0;
+        double tgtABrasRota = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -52,13 +52,13 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             tgtPowerRight = this.gamepad1.left_stick_y;
             tgtTurnLeft = -this.gamepad1.left_stick_x;
             tgtTurnRight = this.gamepad1.left_stick_x;
-            tgtBrasRota = this.gamepad1.left_trigger-this.gamepad1.left_bumper;
-            tgtABrasRota = this.gamepad1.right_trigger-this.gamepad1.right_bumper;
+            tgtBrasRota = this.gamepad1.left_bumper ? 0.7 : -this.gamepad1.left_trigger*0.7;
+            tgtABrasRota = this.gamepad1.right_bumper ? 0.5 : -this.gamepad1.right_trigger*0.5;
 
-            motorLeft.setPower(tgtPowerLeft-tgtTurnLeft);
-            motorRight.setPower(tgtPowerRight-tgtTurnRight);
-            bras.setPower(tgtPower2);
-            avantBras.setPower(tgtPower3);
+            motorLeft.setPower((tgtPowerLeft-tgtTurnRight)*0.6);
+            motorRight.setPower((tgtPowerRight-tgtTurnLeft)*0.6);
+            bras.setPower(tgtBrasRota);
+            avantBras.setPower(tgtABrasRota);
             
             if(gamepad1.y) {
                 // ouvert
@@ -88,8 +88,8 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             telemetry.addData("Puissance motorLeft", motorLeft.getPower());
             telemetry.addData("Puissance théorique motorRight", tgtPowerRight);
             telemetry.addData("Puissance motorRight", motorRight.getPower());
-            telemetry.addData("Puissance théorique Bras", tgtPower2);
-            telemetry.addData("Puissance théorique Avant-Bras", tgtPower3);
+            telemetry.addData("Puissance théorique Bras", tgtBrasRota);
+            telemetry.addData("Puissance théorique Avant-Bras", tgtABrasRota);
             telemetry.addData("Puissance Bras", bras.getPower());
             telemetry.addData("Puissance Avant-Bras", avantBras.getPower());
             telemetry.addData("Status", "Running");

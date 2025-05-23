@@ -10,41 +10,40 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class MyFIRSTJavaOpMode extends LinearOpMode {
     private Gyroscope imu;
-    private DcMotor motorLeft;
-    private DcMotor motorRight;
-    private DcMotor bras;
-    private DcMotor avantBras;
-    private Servo pince;
-    private Servo rouleau;
+    private DcMotor motorLeft;      // propu gauche
+    private DcMotor motorRight;     // propu droite
+    private DcMotor motor2;         // bras
+    private DcMotor motor3;         // avant-bras
+    private Servo pince;            // pince
+    private Servo rouleau;          // rouleau
     private DigitalChannel digitalTouch;
     private DistanceSensor sensorColorRange;
 
     @Override
     public void runOpMode() {
         //imu = hardwareMap.get(Gyroscope.class, "imu");
-        //digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
-        //sensorColorRange = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
         motorLeft = hardwareMap.get(DcMotor.class, "motor0");
         motorRight = hardwareMap.get(DcMotor.class, "motor1");
-        bras = hardwareMap.get(DcMotor.class, "motor2");
-        avantBras = hardwareMap.get(DcMotor.class, "motor3");
+        motor2 = hardwareMap.get(DcMotor.class, "motor2");
+        motor3 = hardwareMap.get(DcMotor.class, "motor3");
+        //digitalTouch = hardwareMap.get(DigitalChannel.class, "digitalTouch");
+        //sensorColorRange = hardwareMap.get(DistanceSensor.class, "sensorColorRange");
         rouleau = hardwareMap.get(Servo.class, "servo0");
         pince = hardwareMap.get(Servo.class, "servo1");
 
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        // run until the end of the match (driver presses STOP)
         double tgtPowerLeft = 0;
         double tgtPowerRight = 0;
         double tgtPower2 = 0;
         double tgtPower3 = 0;
         double tgtTurnLeft = 0;
         double tgtTurnRight = 0;
-
-        // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             motorRight.setDirection(DcMotor.Direction.REVERSE);
 
@@ -55,30 +54,30 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             tgtPower2 = -this.gamepad1.right_stick_y;
             tgtPower3 = -this.gamepad1.right_stick_x;
 
-            motorLeft.setPower(tgtPowerLeft-tgtTurnLeft);
-            motorRight.setPower(tgtPowerRight-tgtTurnRight);
-            bras.setPower(tgtPower2);
-            avantBras.setPower(tgtPower3);
+            motorLeft.setPower(tgtPowerLeft-tgtTurnLeft*0.8);
+            motorRight.setPower(tgtPowerRight-tgtTurnRight*0.8);
+            motor2.setPower(tgtPower2);
+            motor3.setPower(tgtPower3);
             
             if(gamepad1.y) {
-                // ouvert
+                // move to 0 degrees.
                 pince.setPosition(0);
             } else if (gamepad1.x || gamepad1.b) {
-                // semi-fermé
+                // move to 90 degrees.
                 pince.setPosition(0.5);
             } else if (gamepad1.a) {
-                // fermé
+                // move to 180 degrees.
                 pince.setPosition(1);
             }
 
             if(gamepad1.dpad_up) {
-                // reployé
+                // move to 0 degrees.
                 rouleau.setPosition(0);
             } else if (gamepad1.dpad_left || gamepad1.dpad_right) {
-                // semi-déployé
+                // move to 90 degrees.
                 rouleau.setPosition(0.5);
             } else if (gamepad1.dpad_down) {
-                // déployé
+                // move to 180 degrees.
                 rouleau.setPosition(1);
             }
 
@@ -90,8 +89,8 @@ public class MyFIRSTJavaOpMode extends LinearOpMode {
             telemetry.addData("Puissance motorRight", motorRight.getPower());
             telemetry.addData("Puissance théorique Bras", tgtPower2);
             telemetry.addData("Puissance théorique Avant-Bras", tgtPower3);
-            telemetry.addData("Puissance Bras", bras.getPower());
-            telemetry.addData("Puissance Avant-Bras", avantBras.getPower());
+            telemetry.addData("Puissance Bras", motor2.getPower());
+            telemetry.addData("Puissance Avant-Bras", motor3.getPower());
             telemetry.addData("Status", "Running");
             telemetry.update();
 
